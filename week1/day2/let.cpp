@@ -65,7 +65,6 @@ public:
     // Move assignment operator
     Let &operator=(Let &&other) noexcept
     {
-        std::cout << "Move operator\n";
         if (this == &other)
         {
             return *this;
@@ -93,26 +92,69 @@ public:
         return *this;
     }
 
-    // Let &operator+(const Let &other)
-    // {
+    Let &operator+=(const Let &other)
+    {
 
-    //     // m_int += other.m_int;
-    //     // m_double += other.m_double;
+        if (m_type == DATATYPE::DOUBLE && other.m_type == DATATYPE::DOUBLE)
+        {
+            m_double += other.m_double;
+        }
 
-    //     if (m_type == DATATYPE::CHAR && other.m_type == DATATYPE::CHAR)
-    //     {
-    //         char *result = new char[std::strlen(m_string) + std::strlen(other.m_string) + 1];
+        if (m_type == DATATYPE::INT && other.m_type == DATATYPE::INT)
+        {
+            m_int += other.m_int;
+        }
 
-    //         std::strcpy(result, m_string);
-    //         std::strcat(result, other.m_string);
+        if (m_type == DATATYPE::INT && other.m_type == DATATYPE::DOUBLE)
+        {
+            m_double = static_cast<double>(m_int) + other.m_double;
+            m_type = DATATYPE::DOUBLE;
+        }
+        if (m_type == DATATYPE::DOUBLE && other.m_type == DATATYPE::INT)
+        {
+            m_double += static_cast<double>(other.m_int);
+        }
 
-    //         m_string = result;
-    //         delete[] result;
-    //         result = nullptr;
-    //     }
+        if (m_type == DATATYPE::CHAR && other.m_type == DATATYPE::CHAR)
+        {
+            char *result = new char[std::strlen(m_string) + std::strlen(other.m_string) + 1];
 
-    //     return *this;
-    // };
+            std::strcpy(result, m_string);
+            std::strcat(result, other.m_string);
+
+            delete[] m_string;
+            m_string = result;
+        }
+
+        return *this;
+    };
+
+    Let &operator+(const Let &other)
+    {
+
+        if (m_type == DATATYPE::DOUBLE)
+        {
+            m_double += other.m_double;
+        }
+
+        if (m_type == DATATYPE::INT)
+        {
+            m_int += other.m_int;
+        }
+
+        if (m_type == DATATYPE::CHAR && other.m_type == DATATYPE::CHAR)
+        {
+            char *result = new char[std::strlen(m_string) + std::strlen(other.m_string) + 1];
+
+            std::strcpy(result, m_string);
+            std::strcat(result, other.m_string);
+
+            delete[] m_string;
+            m_string = result;
+        }
+
+        return *this;
+    };
 
     Let &operator=(const Let &other)
     {
@@ -140,6 +182,32 @@ public:
         }
 
         return *this;
+    }
+
+    bool operator==(const Let &other)
+    {
+        // Check if the types are the same
+        if (m_type != other.m_type)
+        {
+            return false;
+        }
+
+        // Compare based on the type
+        if (m_type == DATATYPE::INT)
+        {
+            return m_int == other.m_int;
+        }
+        if (m_type == DATATYPE::DOUBLE)
+        {
+            return m_double == other.m_double;
+        }
+        if (m_type == DATATYPE::CHAR)
+        {
+            return std::strcmp(m_string, other.m_string) == 0;
+        }
+
+        // Return false for unsupported types
+        return false;
     }
 
     void m_display()
@@ -181,7 +249,7 @@ private:
 int main()
 {
 
-    // Create instances of Let with different data types
+    // Create object of Let with different data types
     Let intObj(42);          // Integer object
     Let doubleObj(3.14159);  // Double object
     Let stringObj("Hello!"); // String object
@@ -201,6 +269,21 @@ int main()
     std::cout << "Move object values:\n";
     Let moveObj = std::move(stringObj);
     moveObj.m_display(); // Display String
+
+    // += operator
+    Let op1 = 5;
+    op1 += 4.1;
+
+    op1.m_display();
+
+    // == operator
+    Let var5("Hello");
+    Let var6("Hello");
+
+    if (var5 == var6)
+    {
+        std::cout << "var5 == var6 -> This condition satisfies\n";
+    }
 
     return 0;
 }
