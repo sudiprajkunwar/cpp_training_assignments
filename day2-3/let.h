@@ -35,6 +35,8 @@ public:
     Let &operator+(const Let &other);
     bool operator==(const Let &other);
 
+    // friend function
+    friend std::ostream &operator<<(std::ostream &os, const Let &other);
     // Display function
     void m_display();
 

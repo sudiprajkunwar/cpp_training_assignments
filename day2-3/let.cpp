@@ -199,21 +199,7 @@ bool Let::operator==(const Let &other)
 
 void Let::m_display()
 {
-    if (m_type == DATATYPE::INT)
-    {
-        std::cout << "Integer value: " << m_int << '\n';
-    }
-
-    else if (m_type == DATATYPE::DOUBLE)
-    {
-        std::cout << "Double value: " << m_double << '\n';
-    }
-
-    else if (
-        m_type == DATATYPE::CHAR)
-    {
-        std::cout << "String value: " << m_string << '\n';
-    }
+    std::cout << *this << '\n';
 };
 
 // Destructor
@@ -226,44 +212,66 @@ Let::~Let()
     }
 }
 
-int main()
+// Overloading the << operator
+std::ostream &operator<<(std::ostream &os, const Let &other)
 {
-
-    // Create object of Let with different data types
-    Let intObj(42);          // Integer object
-    Let doubleObj(3.14159);  // Double object
-    Let stringObj("Hello!"); // String object
-
-    // Display their values
-    std::cout << "Displaying values:\n";
-    intObj.m_display();    // Display Integer
-    doubleObj.m_display(); // Display Double
-    stringObj.m_display(); // Display String
-
-    // Copy
-    std::cout << "Copy object values:\n";
-    Let copyObj = stringObj;
-    copyObj.m_display(); // Display String
-
-    // Move
-    std::cout << "Move object values:\n";
-    Let moveObj = std::move(stringObj);
-    moveObj.m_display(); // Display String
-
-    // += operator
-    Let op1 = 5;
-    op1 += 4.1;
-
-    op1.m_display();
-
-    // == operator
-    Let var5("Hello");
-    Let var6("Hello");
-
-    if (var5 == var6)
+    if (other.m_type == DATATYPE::INT)
     {
-        std::cout << "var5 == var6 -> This condition satisfies\n";
+        os << "Integer value: " << other.m_int;
     }
-
-    return 0;
+    else if (other.m_type == DATATYPE::DOUBLE)
+    {
+        os << "Double value: " << other.m_double;
+    }
+    else if (other.m_type == DATATYPE::CHAR)
+    {
+        os << "String value: " << other.m_string;
+    }
+    else
+    {
+        os << "Unknown Type";
+    }
+    return os;
 }
+
+// int main()
+// {
+
+//     // Create object of Let with different data types
+//     Let intObj(42);          // Integer object
+//     Let doubleObj(3.14159);  // Double object
+//     Let stringObj("Hello!"); // String object
+
+//     // Display their values
+//     std::cout << "Displaying values:\n";
+//     intObj.m_display();    // Display Integer
+//     doubleObj.m_display(); // Display Double
+//     stringObj.m_display(); // Display String
+
+//     // Copy
+//     std::cout << "Copy object values:\n";
+//     Let copyObj = stringObj;
+//     copyObj.m_display(); // Display String
+
+//     // Move
+//     std::cout << "Move object values:\n";
+//     Let moveObj = std::move(stringObj);
+//     moveObj.m_display(); // Display String
+
+//     // += operator
+//     Let op1 = 5;
+//     op1 += 4.1;
+
+//     op1.m_display();
+
+//     // == operator
+//     Let var5("Hello");
+//     Let var6("Hello");
+
+//     if (var5 == var6)
+//     {
+//         std::cout << "var5 == var6 -> This condition satisfies\n";
+//     }
+
+//     return 0;
+// }
