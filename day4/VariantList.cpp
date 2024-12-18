@@ -9,13 +9,6 @@ struct Node
     Node(const Let &val) : data(val), next(nullptr) {}
 };
 
-// enum class DATATYPE
-// {
-//     INT,
-//     DOUBLE,
-//     CHAR
-// };
-
 class VariantList
 {
 public:
@@ -106,10 +99,10 @@ int main()
 
     op1.m_display();
 
-    // == operator
     Let var5("Hello");
     Let var6("Hello");
 
+    // == operator
     if (var5 == var6)
     {
         std::cout << "var5 == var6 -> This condition satisfies\n";
