@@ -2,18 +2,13 @@
 *.o
 *.out
 *.a
-*.so
-*.exe
-*.dll
+
 
 # Ignore debugging files
 *.dSYM/
-*.log
-*.tmp
 
-# Ignore system files
-.DS_Store
-Thumbs.db
+
+
 
 # Ignore directories
 /build/
@@ -23,15 +18,7 @@ Thumbs.db
 
 # Ignore editor/IDE files
 .vscode/
-.idea/
-*.swp
-*.sublime-workspace
 
-# Ignore CMake cache
-CMakeCache.txt
-CMakeFiles/
 
-# Ignore coverage files
-*.gcno
-*.gcda
-*.gcov
+
+

@@ -4,12 +4,13 @@ template <typename T>
 class SharedPointer
 {
 public:
+    SharedPointer() = delete;
+
     // Constructor
     SharedPointer(const T &val)
     {
         m_val = new T(val);
         m_refCount = new long(1);
-        std::cout << "parameter Constructor: Reference count is now " << *m_refCount << "\n";
     }
 
     // Copy Constructor
@@ -19,13 +20,11 @@ public:
         m_val = other.m_val;
         m_refCount = other.m_refCount;
         ++(*m_refCount);
-        std::cout << "Copy Constructor: Reference count is now " << *m_refCount << "\n";
     }
 
     // Copy Assignment Operator
     SharedPointer &operator=(const SharedPointer &other)
     {
-        std::cout << "Copy Assignment: Reference count is now " << *m_refCount << "\n";
 
         if (this == &other) // Self-assignment check
         {
@@ -88,6 +87,11 @@ public:
         return *m_val;
     }
 
+    int getCount() const
+    {
+        return *m_refCount;
+    }
+
     // Destructor
     ~SharedPointer()
     {
@@ -110,12 +114,11 @@ int main()
     SharedPointer<int> sp2(sp1);  // Copy constructor
     SharedPointer<int> sp3 = sp1; // Copy constructor
 
-    std::cout << *sp1 << "\n"; // Outputs 5
-    std::cout << *sp2 << "\n"; // Outputs 5
-    std::cout << *sp3 << "\n"; // Outputs 5
+    sp3 = sp2; // Copy assignment operator
 
-    sp3 = sp2;                 // Copy assignment operator
-    std::cout << *sp3 << "\n"; // Outputs 5
+    std::cout << "Now the reference count is " << sp1.getCount() << "\n";
+    std::cout << "Now the reference count is " << sp2.getCount() << "\n";
+    std::cout << "Now the reference count is " << sp3.getCount() << "\n";
 
-     return 0;
+    return 0;
 }
