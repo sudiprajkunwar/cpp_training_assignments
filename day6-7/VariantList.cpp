@@ -45,6 +45,24 @@ public:
     const char *getString() const { return m_string ? m_string->c_str() : nullptr; }
     double getDouble() const { return m_double; }
 
+    bool operator==(const Variant &other) const
+    {
+        if (m_type != other.m_type)
+            return false;
+
+        switch (m_type)
+        {
+        case DataType::NUMBER:
+            return m_int == other.m_int;
+        case DataType::DOUBLE:
+            return m_double == other.m_double;
+        case DataType::STRING:
+            return m_string && other.m_string && *m_string == *other.m_string;
+        default:
+            return false;
+        }
+    }
+
     friend std::ostream &operator<<(std::ostream &os, const Variant &var)
     {
         switch (var.m_type)
