@@ -184,6 +184,40 @@ public:
         }
     };
 
+    void applyMedianFilter(std::vector<std::vector<RGB>> &imageData, int kernelSize)
+    {
+        std::vector<std::vector<RGB>> originalImage = imageData;
+        int offset = kernelSize / 2;
+
+        for (int i = offset; i < height - offset; ++i)
+        {
+            for (int j = offset; j < width - offset; ++j)
+            {
+                std::vector<int> rValues, gValues, bValues;
+
+                for (int k = -offset; k <= offset; ++k)
+                {
+                    for (int l = -offset; l <= offset; ++l)
+                    {
+                        const RGB &pixel = originalImage[i + k][j + l];
+                        rValues.push_back(pixel.r);
+                        gValues.push_back(pixel.g);
+                        bValues.push_back(pixel.b);
+                    }
+                }
+
+                // Find the median of the values
+                std::nth_element(rValues.begin(), rValues.begin() + rValues.size() / 2, rValues.end());
+                std::nth_element(gValues.begin(), gValues.begin() + gValues.size() / 2, gValues.end());
+                std::nth_element(bValues.begin(), bValues.begin() + bValues.size() / 2, bValues.end());
+
+                imageData[i][j].r = rValues[rValues.size() / 2];
+                imageData[i][j].g = gValues[gValues.size() / 2];
+                imageData[i][j].b = bValues[bValues.size() / 2];
+            }
+        }
+    }
+
     void normalizePic(std::vector<std::vector<RGB>> &firstImage, std::vector<std::vector<RGB>> &secondImage)
     {
         for (int i = 0; i < firstImage.size(); ++i)
@@ -280,21 +314,15 @@ private:
 int main()
 {
     int width, height, channels;
-    unsigned char *imageData = stbi_load("./images/traffic.jpg", &width, &height, &channels, 3);
-    unsigned char *secondData = stbi_load("./test.png", &width, &height, &channels, 3);
+    unsigned char *imageData = stbi_load("./median.png", &width, &height, &channels, 3);
 
     Filter filter(width, height);
     auto image = filter.convertTo2D(imageData);
-    auto image2 = filter.convertTo2D(secondData);
 
-    filter.convertToGrayscale(image);
-    filter.sobelEdgeDetection(image);
+    filter.applyMedianFilter(image, 5);
 
-    filter.normalizePic(image, image2);
-
-    filter.saveToPNG(image, "red.png");
+    filter.saveToPNG(image, "removedNoise.png");
     stbi_image_free(imageData);
-    stbi_image_free(secondData);
 
     return 0;
 }
