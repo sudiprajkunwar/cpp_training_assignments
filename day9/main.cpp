@@ -184,6 +184,22 @@ public:
         }
     };
 
+    void normalizePic(std::vector<std::vector<RGB>> &firstImage, std::vector<std::vector<RGB>> &secondImage)
+    {
+        for (int i = 0; i < firstImage.size(); ++i)
+        {
+            for (int j = 0; j < firstImage[i].size(); ++j)
+            {
+                RGB &color1 = firstImage[i][j];
+                RGB &color2 = secondImage[i][j];
+
+                color1.r = (color1.r + color2.r) / 2;
+                color1.g = (color1.g + color2.g) / 2;
+                color1.b = (color1.b + color2.b) / 2;
+            }
+        }
+    };
+
     void sobelEdgeDetection(std::vector<std::vector<RGB>> &imageData)
     {
         const int Gx[3][3] = {
@@ -219,8 +235,8 @@ public:
                 gradientMagnitude = std::min(std::max(gradientMagnitude, 0.0f), 255.0f);
 
                 imageData[i][j].r = gradientMagnitude;
-                imageData[i][j].g = gradientMagnitude;
-                imageData[i][j].b = gradientMagnitude;
+                imageData[i][j].g = 0.0f;
+                imageData[i][j].b = 0.0f;
             }
         }
     };
@@ -265,34 +281,20 @@ int main()
 {
     int width, height, channels;
     unsigned char *imageData = stbi_load("./images/traffic.jpg", &width, &height, &channels, 3);
-    if (imageData == nullptr)
-    {
-        std::cout << "Image loading failed\n";
-        return -1;
-    }
+    unsigned char *secondData = stbi_load("./test.png", &width, &height, &channels, 3);
 
     Filter filter(width, height);
     auto image = filter.convertTo2D(imageData);
+    auto image2 = filter.convertTo2D(secondData);
 
     filter.convertToGrayscale(image);
     filter.sobelEdgeDetection(image);
-    filter.applyBlur(image, 5);
-    filter.saveToPNG(image, "test.png");
 
+    filter.normalizePic(image, image2);
+
+    filter.saveToPNG(image, "red.png");
     stbi_image_free(imageData);
-
-    std::vector<std::vector<RGB>> canvas(height, std::vector<RGB>(width, {0xff, 0xff, 0xff}));
-    Rectangle rect(50, 50, 100, 50);
-    rect.draw(canvas, {0, 0, 0}, {0xff, 0, 0});
-
-    Line line(10, 10, 200, 100);
-    line.draw(canvas, {0, 0, 255}, {0, 0, 0});
-
-    std::vector<Coordinate> polygonPoints = {{100, 100}, {200, 150}, {150, 250}, {50, 200}};
-    Polygon polygon(polygonPoints);
-    polygon.draw(canvas, {255, 0, 0}, {0, 0, 0});
-
-    filter.saveToPNG(canvas, "canvas.png");
+    stbi_image_free(secondData);
 
     return 0;
 }
